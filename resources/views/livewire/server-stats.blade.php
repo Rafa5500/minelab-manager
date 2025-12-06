@@ -1,4 +1,4 @@
-<div wire:poll.3s class="bg-gray-800 rounded-lg p-6 border border-gray-700 shadow-lg mb-6">
+<div wire:poll.1s class="bg-gray-800 rounded-lg p-6 border border-gray-700 shadow-lg mb-6">
     <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
         <i class="ph ph-cpu"></i> Status do Servidor
     </h3>

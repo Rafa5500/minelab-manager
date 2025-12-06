@@ -17,17 +17,26 @@ class LogViewer extends Component
 
     public function getLogsProperty()
     {
-        // Pega as últimas 50 linhas do log (-n 50) sem paginação (--no-pager)
-        // O comando 'tac' inverte a ordem (para o mais recente ficar no topo se quiser, 
-        // mas vamos manter padrão).
+        // Pega as últimas 100 linhas
         $cmd = "sudo journalctl -u {$this->serviceName} -n 100 --no-pager";
-
         $output = Process::run($cmd)->output();
 
-        // Transforma o texto em um array de linhas e remove linhas vazias
-        return array_filter(explode("\n", $output));
-    }
+        // Transforma em lista
+        $lines = explode("\n", $output);
 
+        // FILTRO: Remove as linhas de spam do RCON
+        return array_filter($lines, function($line) {
+            // Se a linha estiver vazia, remove
+            if (empty(trim($line))) return false;
+
+            // Se for spam de conexão RCON, esconde!
+            if (str_contains($line, 'RCON Client')) return false;
+            if (str_contains($line, 'RCON Listener')) return false;
+
+            // Se passou pelos testes, mostra a linha
+            return true;
+        });
+    }
     public function render()
     {
         return view('livewire.log-viewer', [

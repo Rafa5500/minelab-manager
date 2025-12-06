@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class BackupManager extends Component
 {
@@ -24,7 +25,13 @@ class BackupManager extends Component
 
         // Chama nosso script passando os argumentos
         Process::run("sudo /usr/local/bin/mine-backup.sh {$this->serverFolder} {$this->backupName}");
-
+	// Envia notificação
+	$url = env('DISCORD_WEBHOOK_URL');
+	if ($url) {
+	    Http::post($url, [
+	        'content' => "📦 **Novo Backup Manual Criado!**\nArquivo: `{$this->backupName}` do servidor `{$this->serverFolder}`."
+	    ]);
+	}
         $this->isCreating = false;
 
         // Avisa o usuário (opcional, requer configuração de flash message, mas vamos simplificar)
